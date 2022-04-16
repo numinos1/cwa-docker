@@ -1,4 +1,4 @@
-# Install and Bootstrap
+# Bootstrap The Application
 
 ## Download the cwa-cwops repo
 
@@ -76,12 +76,14 @@ $docker-compose up -d
 $docker-compose exec wordpress prep.sh
 ```
 
-# WordPress Admin and Program List
+# Using the Application
+
+## WordPress Admin and Program List
 
 - http://localhost:3073/wp-login.php
 - http://localhost:3073/program-list/
 
-# Access MySQL Through Docker CLI
+## Access MySQL Through Docker CLI
 
 ```bash
 $docker ps
@@ -89,14 +91,14 @@ $docker exec -it <image-id> bash
 $mysql -u root -p
 ```
 
-# Access MySQL Through Local CLI
+## Access MySQL Through Local CLI
 
 ```bash
 $mysql -h 127.0.0.1 -P 3074 -u cwacwops_wp540 --password="cwacwops" cwacwops_wp540
 $mysql -h 127.0.0.1 -p 3074 -u root --password=cwacwops
 ```
 
-# Node Utilites to Play With
+## Node Utilites to Play With
 
 ```bash
 $cd utils
@@ -105,7 +107,9 @@ $node snippets.mjs
 $node tables.mjs
 ```
 
-# Directory Structure
+# Documentation
+
+## Directory Structure
 
 | Directory        | Description         |
 | ---------------- | ------------------- |
