@@ -1,14 +1,9 @@
 # Bootstrap The Application
 
-## Download the cwa-cwops repo
-
-```bash
-git clone ...
-```
-
 ## Install Docker
 
 https://docs.docker.com/get-docker/
+
 
 ## Create Keys and add to remote server
 
@@ -26,13 +21,19 @@ $vi authorized_keys
 $exit
 ```
 
-## Add the CWA Keys to ~/.ssh/config
+## Add Keys to ~/.ssh/config
 
 ```conf
 Host cwa
   HostName cwa.cwops.org
   User cwacwops
   IdentityFile ~/.ssh/id_cwops
+```
+
+## Download the cwa-cwops repo
+
+```bash
+git clone git@github.com:numinos1/cwa-docker.git
 ```
 
 ## Create the .env config file
