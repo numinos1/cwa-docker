@@ -3,4 +3,5 @@ utils/node_modules
 utils/snippets
 wp-content
 *.gz
+*.tar
 .env

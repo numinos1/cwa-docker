@@ -1,20 +1,32 @@
 # Install and Bootstrap
 
-## 1. Download the cwa-cwops repo
+## Download the cwa-cwops repo
 
 ```bash
 git clone ...
 ```
 
-## 2. Install Docker
+## Install Docker
 
-- Install the Docker Desktop
+https://docs.docker.com/get-docker/
 
-## 3. Create Keys and add to remote server
+## Create Keys and add to remote server
 
-...TODO...
+```bash
+$cd ~/.ssh
+$ssh-keygen -t rsa
+  (name = id_cwops)
+$cat id_cwops.pub
+  (copy the key)
+$ssh cwa.cwops.org
+  (enter password)
+$cd .ssh
+$vi authorized_keys
+  (paste id_cwops.pub key)
+$exit
+```
 
-## 4. Add the CWA Keys to ~/.ssh/config
+## Add the CWA Keys to ~/.ssh/config
 
 ```conf
 Host cwa
@@ -23,78 +35,82 @@ Host cwa
   IdentityFile ~/.ssh/id_cwops
 ```
 
-## 5. Add .env config file
+## Create the .env config file
 
 ```conf
 production_url=https://cwops.org
+prod_admin_url=https://cwa.cwops.org
+dev_url=http://http://localhost:3073
+
 db_table_prefix=wpw1_
 wp_plugins_to_disable=
 
 db_host=db:3306
 db_user=cwacwops_wp540
-db_password=PASSWORD_GOES_HERE
+db_password=cwacwops
 db_name=cwacwops_wp540
-db_root_password=cwa
+db_root_password=cwacwops
 wp_debug_mode=false
 ```
 
 # Download the db and wp-content
 
 ```bash
-ssh cwa
-mysqldump -u cwacwops_wp540 cwacwops_wp540 -p | gzip > backup.sql.gz
-tar -cvzf wp-content.tar.gz www/wp-content
-exit
-scp cwa:backup.sql.gz init/backup.sql.gz
-rm -rf wp-content
-scp cwa:wp-content.tar.gz .
-tar xvfz wp-content.tar.gz
-mv www/wp-content .
-rmdir www
-rm wp-content.tar.gz
+$ssh cwa
+$mysqldump -u cwacwops_wp540 cwacwops_wp540 -p | gzip > backup.sql.gz
+$tar -cvzf wp-content.tar.gz www/wp-content
+$exit
+$scp cwa:backup.sql.gz init/backup.sql.gz
+$rm -rf wp-content
+$scp cwa:wp-content.tar.gz .
+$tar xvfz wp-content.tar.gz
+$mv www/wp-content .
+$rmdir www
+$rm wp-content.tar.gz
 ```
 
 # Bootstrap the Docker Image
 
 ```bash
-docker-compose up -d
-docker-compose exec wordpress prep.sh
+$docker-compose up -d
+$docker-compose exec wordpress prep.sh
 ```
 
-# Run the node scripts
+# WordPress Admin and Program List
+
+- http://localhost:3073/wp-login.php
+- http://localhost:3073/program-list/
+
+# Access MySQL Through Docker CLI
 
 ```bash
-cd utils
-yarn
-node snippets.mjs
-node tables.mjs
+$docker ps
+$docker exec -it <image-id> bash
+$mysql -u root -p
 ```
 
-# Access the Reports
-
-1. http://localhost:3073/wp-login.php
-2. Login with username and password
-3. http://localhost:3073/program-list/
-
-# MySQL Docker CLI
+# Access MySQL Through Local CLI
 
 ```bash
-docker ps
-docker exec -it <image-id> bash
-mysql -u root -p
+$mysql -h 127.0.0.1 -P 3074 -u cwacwops_wp540 --password="cwacwops" cwacwops_wp540
+$mysql -h 127.0.0.1 -p 3074 -u root --password=cwacwops
 ```
 
-# MySQL Local CLI
+# Node Utilites to Play With
 
 ```bash
-mysql -h 127.0.0.1 -P 3074 -u cwacwops_wp540 --password="7B-m)p7d2S" cwacwops_wp540
-mysql -h 127.0.0.1 -p 3074 -u root --password=cwaroot
+$cd utils
+$yarn
+$node snippets.mjs
+$node tables.mjs
 ```
 
 # Directory Structure
 
-/mysql          Where Docker will mount the MySQL database files
-/docs           Markdown documentation files
-/init           Shell scripts for initialization
-/utils          Node scripts
-/wp-content     Where Docker will mount the wp-content Wordpress directory
+| Directory        | Description         |
+| ---------------- | ------------------- |
+| __/mysql__       | Where Docker will mount the MySQL database files |
+| __/docs__        | Markdown documentation files |
+| __/init__        | Shell scripts for initialization |
+| __/utils__       | Node scripts |
+| __/wp-content__  | Where Docker will mount the wp-content Wordpress directory |
