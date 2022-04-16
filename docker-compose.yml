@@ -10,7 +10,7 @@ services:
       - ./wp-content:/var/www/html/wp-content
       - ./init/prep.sh:/usr/local/bin/prep.sh
       # - ./wordpress:/var/www/html
-      - ./admin:/var/www/html/admin
+      # - ./admin:/var/www/html/admin
     ports:
       - '3073:80'
     restart: always
@@ -29,8 +29,8 @@ services:
     container_name: mysql
     image: mysql:5.7
     volumes:
-      - ./database:/var/lib/mysql
-      - ./mysqldumps/backup.sql.gz:/docker-entrypoint-initdb.d/backup.sql.gz
+      - ./mysql:/var/lib/mysql
+      - ./init/backup.sql.gz:/docker-entrypoint-initdb.d/backup.sql.gz
       - ./init/migrate.sh:/docker-entrypoint-initdb.d/migrate.sh
     restart: always
     ports: 

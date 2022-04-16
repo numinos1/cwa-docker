@@ -45,7 +45,7 @@ ssh cwa
 mysqldump -u cwacwops_wp540 cwacwops_wp540 -p | gzip > backup.sql.gz
 tar -cvzf wp-content.tar.gz www/wp-content
 exit
-scp cwa:backup.sql.gz mysqldumps/backup.sql.gz
+scp cwa:backup.sql.gz init/backup.sql.gz
 rm -rf wp-content
 scp cwa:wp-content.tar.gz .
 tar xvfz wp-content.tar.gz
@@ -93,9 +93,8 @@ mysql -h 127.0.0.1 -p 3074 -u root --password=cwaroot
 
 # Directory Structure
 
-/database       Where Docker will mount the MySQL database files
+/mysql          Where Docker will mount the MySQL database files
 /docs           Markdown documentation files
 /init           Shell scripts for initialization
-/migration      Node scripts
-/mysqldumps     Where Docker will mount the backup.tar.gz database dump
+/utils          Node scripts
 /wp-content     Where Docker will mount the wp-content Wordpress directory
