@@ -57,7 +57,8 @@ rm wp-content.tar.gz
 # Bootstrap the Docker Image
 
 ```bash
-docker-compose up -d && docker-compose exec wordpress prep.sh
+docker-compose up -d
+docker-compose exec wordpress prep.sh
 ```
 
 # Run the node scripts
