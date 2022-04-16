@@ -1,0 +1,6 @@
+database
+utils/node_modules
+utils/snippets
+wp-content
+*.gz
+.env

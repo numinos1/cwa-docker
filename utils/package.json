@@ -1,0 +1,16 @@
+{
+  "name": "migrate",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "Andrew Bunker",
+  "license": "MIT",
+  "scripts": {
+  },
+  "dependencies": {
+    "chalk": "^5.0.1",
+    "dotenv": "^16.0.0",
+    "fs-extra": "^10.0.1",
+    "knex": "^1.0.5",
+    "mysql": "^2.18.1"
+  }
+}
