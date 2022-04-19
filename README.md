@@ -75,7 +75,7 @@ platform: linux/x86_64
 
 ```bash
 $ssh cwa
-$mysqldump -u cwacwops_wp540 cwacwops_wp540 -p | gzip > backup.sql.gz
+$mysqldump -u cwacwops_wp540 cwacwops_wp540 -p --no-tablespaces | gzip > backup.sql.gz
 $tar -cvzf wp-content.tar.gz www/wp-content
 $exit
 $scp cwa:backup.sql.gz init/backup.sql.gz
