@@ -1,11 +1,11 @@
 # Bootstrap The Application
 
-## Install Docker
+## 1. Install the Docker Desktop
 
 https://docs.docker.com/get-docker/
 
 
-## Create Keys and add to remote server
+## 2. Create Keys and add to remote server
 
 ```bash
 $cd ~/.ssh
@@ -13,15 +13,24 @@ $ssh-keygen -t rsa
   (name = id_cwops)
 $cat id_cwops.pub
   (copy the key)
-$ssh cwa.cwops.org
-  (enter password)
-$cd .ssh
-$vi authorized_keys
-  (paste id_cwops.pub key)
-$exit
 ```
 
-## Add Keys to ~/.ssh/config
+- Login to the cPanel
+- Click on SSH Access
+- Click on Import Key
+- Give it a name
+- Paste in the public key
+- Don't enter a password
+- Don't enter a private key
+- On the main SSH Access page, click the key's "Manage" link
+- Click the "Authorize" button
+- You should now be able to ssh without a password
+
+```bash
+$ssh cwa
+```
+
+## 3. Add Keys to ~/.ssh/config
 
 ```conf
 Host cwa
@@ -30,18 +39,18 @@ Host cwa
   IdentityFile ~/.ssh/id_cwops
 ```
 
-## Download the cwa-cwops repo
+## 4. Download the cwa-cwops repo
 
 ```bash
 git clone git@github.com:numinos1/cwa-docker.git
 ```
 
-## Create the .env config file
+## 5. Create the .env config file
 
 ```conf
 production_url=https://cwops.org
 prod_admin_url=https://cwa.cwops.org
-dev_url=http://http://localhost:3073
+dev_url=http://localhost:3073
 
 db_table_prefix=wpw1_
 wp_plugins_to_disable=
@@ -54,7 +63,15 @@ db_root_password=cwacwops
 wp_debug_mode=false
 ```
 
-# Download the db and wp-content
+## 6. Modification for M1 Macs
+
+Add the following line to both the "wordpress" and "db" sections after the "image"
+
+```yml
+platform: linux/x86_64
+```
+
+## 7. Download the db and wp-content
 
 ```bash
 $ssh cwa
@@ -62,20 +79,36 @@ $mysqldump -u cwacwops_wp540 cwacwops_wp540 -p | gzip > backup.sql.gz
 $tar -cvzf wp-content.tar.gz www/wp-content
 $exit
 $scp cwa:backup.sql.gz init/backup.sql.gz
-$rm -rf wp-content
 $scp cwa:wp-content.tar.gz .
 $tar xvfz wp-content.tar.gz
-$mv www/wp-content .
-$rmdir www
 $rm wp-content.tar.gz
 ```
 
-# Bootstrap the Docker Image
+## 8. Bootstrap the Docker Image
 
 ```bash
-$docker-compose up -d
+$docker-compose up -d 
 $docker-compose exec wordpress prep.sh
 ```
+
+# Updating the database and wp-content
+
+## 1. Stop & Throw away the Docker Image
+
+- In the Docker Desktop, click "Stop"
+- In the Docker Desktop, click "Trash"
+
+## 2. Remove the existing db and wp-content files
+
+```bash
+$rm -rf mysql
+$rm -rf www
+$rm init/backup.sql.gz
+```
+
+## 3. Re-Download and Bootstrap Docker
+
+- Follow steps 7 & 8 In the last section
 
 # Using the Application
 
@@ -112,10 +145,82 @@ $node tables.mjs
 
 ## Directory Structure
 
-| Directory        | Description         |
-| ---------------- | ------------------- |
-| __/mysql__       | Where Docker will mount the MySQL database files |
-| __/docs__        | Markdown documentation files |
-| __/init__        | Shell scripts for initialization |
-| __/utils__       | Node scripts |
-| __/wp-content__  | Where Docker will mount the wp-content Wordpress directory |
+| Directory            | Description         |
+| -------------------- | ------------------- |
+| __/mysql__           | Where Docker will mount the MySQL database files |
+| __/docs__            | Markdown documentation files |
+| __/init__            | Shell scripts for initialization |
+| __/utils__           | Node scripts |
+| __/www/wp-content__  | Where Docker will mount the wp-content Wordpress directory |
+
+## MySQL Tables
+
+cwa_advisorclass                         
+cwa_advisorclass2                        
+cwa_advisornew                           
+cwa_advisornew2                          
+cwa_audio_assessment                     
+cwa_audio_assessment2                    
+cwa_evaluate_advisor                     
+cwa_evaluate_advisor2                    
+cwa_past_advisorclass                    
+cwa_past_advisorclass2                   
+cwa_past_advisornew                      
+cwa_past_advisornew2                     
+cwa_past_student                         
+cwa_past_student2                        
+cwa_production_email                     
+cwa_reports                              
+cwa_reports2                             
+cwa_student                              
+cwa_student2                             
+cwa_student_fields                       
+cwa_testmode_email                       
+wpw1_actionscheduler_actions             
+wpw1_actionscheduler_claims              
+wpw1_actionscheduler_groups              
+wpw1_actionscheduler_logs                
+wpw1_aft_cc                              
+wpw1_commentmeta                         
+wpw1_comments                            
+wpw1_links                               
+wpw1_options                             
+wpw1_postmeta                            
+wpw1_posts                               
+wpw1_simple_history                      
+wpw1_simple_history_contexts             
+wpw1_snippets                            
+wpw1_term_relationships                  
+wpw1_term_taxonomy                       
+wpw1_termmeta                            
+wpw1_terms                               
+wpw1_usermeta                            
+wpw1_users                               
+wpw1_wp_phpmyadmin_extension__errors_log 
+wpw1_wpmailsmtp_debug_events             
+wpw1_wpmailsmtp_tasks_meta      
+
+# cwa_ Migration Commands
+
+RENAME TABLE cwa_advisorclass TO wpw1_advisorclass;
+RENAME TABLE cwa_advisorclass2 TO wpw1_advisorclass2;
+RENAME TABLE cwa_advisornew TO wpw1_advisornew;
+RENAME TABLE cwa_advisornew2 TO wpw1_advisornew2;
+RENAME TABLE cwa_audio_assessment TO wpw1_assessment;
+RENAME TABLE cwa_audio_assessment2 TO wpw1_assessment2;
+RENAME TABLE cwa_evaluate_advisor TO wpw1_evaluate_advisor;
+RENAME TABLE cwa_evaluate_advisor2 TO wpw1_evaluate_advisor2;
+RENAME TABLE cwa_past_advisorclass TO wpw1_past_advisorclass;
+RENAME TABLE cwa_past_advisorclass2 TO wpw1_past_advisorclass2;
+RENAME TABLE cwa_past_advisornew TO wpw1_past_advisornew;
+RENAME TABLE cwa_past_advisornew2 TO wpw1_past_advisornew2;
+RENAME TABLE cwa_past_student TO wpw1_past_student;
+RENAME TABLE cwa_past_student2 TO wpw1_past_student2;
+RENAME TABLE cwa_production_email TO wpw1_production_email;
+RENAME TABLE cwa_reports TO wpw1_reports;
+RENAME TABLE cwa_reports2 TO wpw1_reports2;
+RENAME TABLE cwa_student TO wpw1_student;
+RENAME TABLE cwa_student2 TO wpw1_student2;
+RENAME TABLE cwa_student_fields TO wpw1_student_fields;
+RENAME TABLE cwa_testmode_email TO wpw1_testmode_email;
+UPDATE wpw1_snippets SET code = REPLACE(code, 'cwa_', 'wpw1_');

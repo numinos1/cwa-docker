@@ -7,7 +7,7 @@ services:
       - db
     image: wordpress:latest
     volumes:
-      - ./wp-content:/var/www/html/wp-content
+      - ./www/wp-content:/var/www/html/wp-content
       - ./init/prep.sh:/usr/local/bin/prep.sh
       # - ./wordpress:/var/www/html
       # - ./admin:/var/www/html/admin

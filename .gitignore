@@ -1,7 +1,7 @@
 mysql
 utils/node_modules
 utils/snippets
-wp-content
+www
 *.gz
 *.tar
 .env
