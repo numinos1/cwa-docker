@@ -202,25 +202,28 @@ wpw1_wpmailsmtp_tasks_meta
 
 # cwa_ Migration Commands
 
-RENAME TABLE cwa_advisorclass TO wpw1_advisorclass;
-RENAME TABLE cwa_advisorclass2 TO wpw1_advisorclass2;
-RENAME TABLE cwa_advisornew TO wpw1_advisornew;
-RENAME TABLE cwa_advisornew2 TO wpw1_advisornew2;
-RENAME TABLE cwa_audio_assessment TO wpw1_assessment;
-RENAME TABLE cwa_audio_assessment2 TO wpw1_assessment2;
-RENAME TABLE cwa_evaluate_advisor TO wpw1_evaluate_advisor;
-RENAME TABLE cwa_evaluate_advisor2 TO wpw1_evaluate_advisor2;
-RENAME TABLE cwa_past_advisorclass TO wpw1_past_advisorclass;
-RENAME TABLE cwa_past_advisorclass2 TO wpw1_past_advisorclass2;
-RENAME TABLE cwa_past_advisornew TO wpw1_past_advisornew;
-RENAME TABLE cwa_past_advisornew2 TO wpw1_past_advisornew2;
-RENAME TABLE cwa_past_student TO wpw1_past_student;
-RENAME TABLE cwa_past_student2 TO wpw1_past_student2;
-RENAME TABLE cwa_production_email TO wpw1_production_email;
-RENAME TABLE cwa_reports TO wpw1_reports;
-RENAME TABLE cwa_reports2 TO wpw1_reports2;
-RENAME TABLE cwa_student TO wpw1_student;
-RENAME TABLE cwa_student2 TO wpw1_student2;
-RENAME TABLE cwa_student_fields TO wpw1_student_fields;
-RENAME TABLE cwa_testmode_email TO wpw1_testmode_email;
-UPDATE wpw1_snippets SET code = REPLACE(code, 'cwa_', 'wpw1_');
+RENAME TABLE `cwa_advisorclass` TO `wpw1_cwa_advisorclass`;
+RENAME TABLE `cwa_advisorclass2` TO `wpw1_cwa_advisorclass2`;
+RENAME TABLE `cwa_advisornew` TO `wpw1_cwa_advisornew`;
+RENAME TABLE `cwa_advisornew2` TO `wpw1_cwa_advisornew2`;
+RENAME TABLE `cwa_audio_assessment` TO `wpw1_cwa_audio_assessment`;
+RENAME TABLE `cwa_audio_assessment2` TO `wpw1_cwa_audio_assessment2`;
+RENAME TABLE `cwa_evaluate_advisor` TO `wpw1_cwa_evaluate_advisor`;
+RENAME TABLE `cwa_evaluate_advisor2` TO `wpw1_cwa_evaluate_advisor2`;
+RENAME TABLE `cwa_past_advisorclass` TO `wpw1_cwa_past_advisorclass`;
+RENAME TABLE `cwa_past_advisorclass2` TO `wpw1_cwa_past_advisorclass2`;
+RENAME TABLE `cwa_past_advisornew` TO `wpw1_cwa_past_advisornew`;
+RENAME TABLE `cwa_past_advisornew2` TO `wpw1_cwa_past_advisornew2`;
+RENAME TABLE `cwa_past_student` TO `wpw1_cwa_past_student`;
+RENAME TABLE `cwa_past_student2` TO `wpw1_cwa_past_student2`;
+RENAME TABLE `cwa_production_email` TO `wpw1_cwa_production_email`;
+RENAME TABLE `cwa_reports` TO `wpw1_cwa_reports`;
+RENAME TABLE `cwa_reports2` TO `wpw1_cwa_reports2`;
+RENAME TABLE `cwa_student` TO `wpw1_cwa_student`;
+RENAME TABLE `cwa_student2` TO `wpw1_cwa_student2`;
+RENAME TABLE `cwa_student_fields` TO `wpw1_cwa_student_fields`;
+RENAME TABLE `cwa_testmode_email` TO `wpw1_cwa_testmode_email`;
+UPDATE wpw1_snippets SET code = REPLACE(code, 'cwa_', 'wpw1_cwa_');
+
+UPDATE wpw1_snippets SET code = REPLACE(code, '/home/cwopsorg/CWAT', '/Users/abunker/Work/wordpress/CWAT');
+UPDATE wpw1_snippets SET code = REPLACE(code, '/home/cwacwops/CWAT', '/Users/abunker/Work/wordpress/CWAT');

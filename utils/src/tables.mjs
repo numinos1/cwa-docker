@@ -4,15 +4,16 @@ const tables = await getTables();
 
 tables.forEach(table => {
   if ((/^cwa_/).test(table.name)) {
-    if (!(/2$/).test(table.name)) {
-      console.log();
-      console.log(chalk.blue(table.name), table.total);
-      Object.keys(table.props).forEach(prop => {
-        const type = table.props[prop].Type.replace(/\(.*?\)/, '');
+    console.log('RENAME TABLE `' + table.name + '` TO `wpw1_' + table.name + '`;')
+    // if (!(/2$/).test(table.name)) {
+    //   console.log();
+    //   console.log(chalk.blue(table.name), table.total);
+    //   Object.keys(table.props).forEach(prop => {
+    //     const type = table.props[prop].Type.replace(/\(.*?\)/, '');
         
-        console.log('-', chalk.green(prop), type);
-      })
-    }
+    //     console.log('-', chalk.green(prop), type);
+    //   })
+    // }
   }
 });
 
