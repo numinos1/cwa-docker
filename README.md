@@ -73,6 +73,8 @@ platform: linux/x86_64
 
 ## 7. Download the db and wp-content
 
+- Note: The DB password is in www/wp-config.php
+
 ```bash
 $ssh cwa
 $mysqldump -u cwacwops_wp540 cwacwops_wp540 -p --no-tablespaces | gzip > backup.sql.gz
@@ -116,6 +118,8 @@ $rm init/backup.sql.gz
 
 - http://localhost:3073/wp-login.php
 - http://localhost:3073/program-list/
+
+* Note: Wordpress uses personal login credentials
 
 ## Access MySQL Through Docker CLI
 
