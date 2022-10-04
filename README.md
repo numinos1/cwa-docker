@@ -73,7 +73,8 @@ platform: linux/x86_64
 
 ## 7. Download the db and wp-content
 
-- Note: The DB password is in www/wp-config.php
+- Note: The DB password is in www/wp-config.php 
+- 7B-m)p7d2S
 
 ```bash
 $ssh cwa
@@ -133,7 +134,7 @@ $mysql -u root -p
 
 ```bash
 $mysql -h 127.0.0.1 -P 3074 -u cwacwops_wp540 --password="cwacwops" cwacwops_wp540
-$mysql -h 127.0.0.1 -p 3074 -u root --password=cwacwops
+$mysql -h 127.0.0.1 -P 3074 -u root --password=cwacwops
 ```
 
 ## Node Utilites to Play With
