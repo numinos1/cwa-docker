@@ -5,7 +5,7 @@ services:
     container_name: wordpress
     depends_on:
       - db
-    image: wordpress:6.0.0
+    image: wordpress:6.1.1-php7.4-apache
     platform: linux/x86_64
     volumes:
       - ./www/wp-content:/var/www/html/wp-content
@@ -23,19 +23,19 @@ services:
       WORDPRESS_TABLE_PREFIX: $db_table_prefix
       WORDPRESS_DEBUG: $wp_debug_mode
       DISABLED_PLUGINS: $wp_plugins_to_disable
-      WORDPRESS_CONFIG_EXTRA: 
+      WORDPRESS_CONFIG_EXTRA:
        define( 'WP_HOME', 'http://localhost:3073' );
        define( 'WP_SITEURL', 'http://localhost:3073' );
   db:
     container_name: mysql
-    image: mysql:5.7
+    image: mysql:8.0
     platform: linux/x86_64
     volumes:
       - ./mysql:/var/lib/mysql
       - ./init/backup.sql.gz:/docker-entrypoint-initdb.d/backup.sql.gz
       - ./init/migrate.sh:/docker-entrypoint-initdb.d/migrate.sh
     restart: always
-    ports: 
+    ports:
       - '3074:3306'
     environment:
       MYSQL_ROOT_PASSWORD: $db_root_password
@@ -46,3 +46,14 @@ services:
       PRODUCTION_URL: $production_url
       PROD_ADMIN_URL: $prod_admin_url
       DEV_URL: $dev_url
+  # phpmyadmin
+  phpmyadmin:
+    depends_on:
+      - db
+    image: phpmyadmin/phpmyadmin
+    restart: always
+    ports:
+      - '8080:80'
+    environment:
+      PMA_HOST: db
+      MYSQL_ROOT_PASSWORD: $db_root_password
