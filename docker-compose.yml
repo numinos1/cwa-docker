@@ -21,7 +21,7 @@ services:
       WORDPRESS_TABLE_PREFIX: $db_table_prefix
       WORDPRESS_DEBUG: $wp_debug_mode
       DISABLED_PLUGINS: $wp_plugins_to_disable
-      WORDPRESS_CONFIG_EXTRA: 
+      WORDPRESS_CONFIG_EXTRA:
        define( 'WP_HOME', 'http://localhost:3073' );
        define( 'WP_SITEURL', 'http://localhost:3073' );
        define( 'WP_DEBUG', true );
@@ -36,7 +36,7 @@ services:
       - ./init/backup.sql.gz:/docker-entrypoint-initdb.d/backup.sql.gz
       - ./init/migrate.sh:/docker-entrypoint-initdb.d/migrate.sh
     restart: always
-    ports: 
+    ports:
       - '3074:3306'
     environment:
       MYSQL_ROOT_PASSWORD: $db_root_password
