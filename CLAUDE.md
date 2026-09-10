@@ -105,8 +105,16 @@ top-level `prep.sh` and `migrate.sh` are stale duplicates and are gitignored.
 | | |
 |---|---|
 | WordPress | **http://localhost:3073** |
+| phpMyAdmin | **http://localhost:8080** |
 | MySQL from the host | **127.0.0.1:3074** |
 | MySQL from the wordpress container | `db:3306` |
+
+Container names are `wordpress`, `mysql` and `phpmyadmin`, so the database is reachable
+directly with:
+
+```bash
+docker exec -i mysql mysql -u <db_user> -p<db_password> <db_name> -e "SQL HERE;"
+```
 
 `WP_HOME` and `WP_SITEURL` are forced to `http://localhost:3073` in
 `docker-compose.yml`, and `WP_DEBUG` / `WP_DEBUG_LOG` are on.
@@ -137,6 +145,12 @@ top-level `prep.sh` and `migrate.sh` are stale duplicates and are gitignored.
 ## Conventions
 
 - **Commit straight to `main`.** This repo has no PR workflow; the snippet repo does.
+- ⚠️ **Pull before you push.** This repo has more than one contributor, and `main` has
+  been pushed to from elsewhere. A merge is normal here; **never force-push.**
+- **Images are pinned to match production** — `wordpress:7.1-php8.4-apache` and
+  `mysql:8.0`. PHP 8.4 matters: it is what production serves, so snippet behavior in
+  Docker matches live. An upstream commit once reverted these to `6.1.1-php7.4` and
+  `mysql:5.7`; if that reappears, it is a regression.
 - **`.env` is gitignored** and holds the database credentials, table prefix, the plugin
   disable list, and the production/dev URLs used by `migrate.sh`.
 - **Never commit dumps or archives.** `.gitignore` covers `*.gz`, `*.tar`, `www`, `mysql`,
