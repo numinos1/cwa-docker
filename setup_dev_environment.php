@@ -24,10 +24,12 @@ class CWADevSetup {
         echo "===========================================\n\n";
         
         $this->runStartupScript();
+        $this->ensureUploadsDirectory();
         $this->loadEnvFile();
-//        $this->waitForMySQL();
+        $this->waitForMySQL();
         $this->connectToDatabase();
-        $callsign = $this->getUserCallsign();
+//        $callsign = $this->getUserCallsign();
+        $callsign = 'K7OJL';
         $this->configureAdministrator($callsign);
         
         echo "\n===========================================\n";
@@ -71,6 +73,80 @@ class CWADevSetup {
 		echo "Startup script completed successfully.\n\n";
 	}
     
+	/**
+	 * Make sure www/wp-content/uploads exists, with or without the media library.
+	 *
+	 * newDocker.sh only builds uploads.tar.gz when run as `./newDocker.sh uploads=y`.
+	 * It is ~740 MB and the media library barely changes, so the default is to skip it.
+	 *
+	 * This runs AFTER startup.sh, which already attempts its own `scp cwa:uploads.tar.gz`.
+	 * So by the time we get here there are three possible states, and all three are
+	 * handled without caring which happened:
+	 *
+	 *   1. startup.sh downloaded and extracted it -- the directory is populated, we do
+	 *      nothing.
+	 *   2. No tarball on the server -- startup.sh's scp and tar both failed noisily and
+	 *      the directory is missing. We create an empty one.
+	 *   3. A tarball exists but startup.sh did not fetch it -- we fetch and extract it.
+	 *
+	 * An empty uploads directory is a working dev environment: WordPress serves the
+	 * site normally and simply has no media. Nothing here fails the setup.
+	 */
+	private function ensureUploadsDirectory() {
+		echo "Step 1b: Ensuring wp-content/uploads exists...\n";
+
+		$uploadsDir = 'www/wp-content/uploads';
+
+		if (is_dir($uploadsDir)) {
+			$entries = @scandir($uploadsDir);
+			$count = is_array($entries) ? max(0, count($entries) - 2) : 0;   // less . and ..
+			if ($count > 0) {
+				echo "  uploads directory is present with " . $count . " entries. Nothing to do.\n\n";
+				return;
+			}
+			echo "  uploads directory exists but is empty.\n";
+		}
+
+		// Is there a tarball on the server to pull? A non-zero exit just means no.
+		echo "  Checking the server for uploads.tar.gz...\n";
+		$check = 0;
+		@exec('ssh cwa "test -f uploads.tar.gz" 2>&1', $out, $check);
+
+		if ($check === 0) {
+			echo "  Found it. Retrieving (this is a large file)...\n";
+			$scp = 0;
+			passthru('scp cwa:uploads.tar.gz . 2>&1', $scp);
+
+			if ($scp === 0 && file_exists('uploads.tar.gz')) {
+				echo "  Extracting uploads.tar.gz...\n";
+				$untar = 0;
+				passthru('tar xfz uploads.tar.gz 2>&1', $untar);
+				if ($untar === 0) {
+					echo "  uploads restored from the server.\n\n";
+					return;
+				}
+				echo "  WARNING: extracting uploads.tar.gz failed. Falling back to an empty directory.\n";
+			} else {
+				echo "  WARNING: downloading uploads.tar.gz failed. Falling back to an empty directory.\n";
+			}
+		} else {
+			echo "  No uploads.tar.gz on the server -- newDocker.sh was run without uploads=y.\n";
+		}
+
+		if (!is_dir($uploadsDir)) {
+			// 0777 because the directory is bind-mounted into the container, where
+			// WordPress runs as www-data and needs to write to it. Development only.
+			if (!@mkdir($uploadsDir, 0777, true)) {
+				$this->error("Could not create '" . $uploadsDir . "'");
+			}
+			echo "  Created an empty " . $uploadsDir . ".\n";
+		}
+
+		@chmod($uploadsDir, 0777);
+		echo "  The site will run normally; media will be missing.\n";
+		echo "  To include it: run './newDocker.sh uploads=y' on the server, then re-run this script.\n\n";
+	}
+
 	private function loadEnvFile() {
 		echo "Step 2: Loading environment variables...\n";
 		
@@ -191,23 +267,22 @@ class CWADevSetup {
 	}
     
     private function getUserCallsign() {
-//        echo "Step 5: Get user callsign...\n";
-//        echo "Enter your CW Academy login (amateur radio callsign): ";
-//        
-//        $handle = fopen("php://stdin", "r");
-//        $callsign = trim(fgets($handle));
-//        fclose($handle);
-//        
-//        if (empty($callsign)) {
-//            $this->error("Callsign cannot be empty");
-//        }
-//        
-//        $callsign = strtoupper($callsign);
-//        
-//        echo "Using callsign: " . $callsign . "\n\n";
-//        
-//        return $callsign;
-		  return 'K7OJL';
+          echo "Step 5: Get user callsign...\n";
+          echo "Enter your CW Academy login (amateur radio callsign): ";
+          
+          $handle = fopen("php:  stdin", "r");
+          $callsign = trim(fgets($handle));
+          fclose($handle);
+          
+          if (empty($callsign)) {
+              $this->error("Callsign cannot be empty");
+          }
+          
+          $callsign = strtoupper($callsign);
+          
+          echo "Using callsign: " . $callsign . "\n\n";
+          
+          return $callsign;
     }
     
 	private function configureAdministrator($callsign) {
@@ -275,22 +350,22 @@ class CWADevSetup {
 			echo "  CW Academy admin flag set to 'Y'.\n";
 		}
 		
-		echo "  Disabling 'JAVASCRIPT: Refresh Requests' snippet...\n";
+		echo "  Disabling 'JAVASCRIPT Refresh Requests' snippet...\n";
 		
 		$stmt = $this->pdo->prepare(
 			"SELECT id FROM wpw1_snippets WHERE name = :name"
 		);
-		$stmt->execute(array('name' => 'JAVASCRIPT: Refresh Requests'));
+		$stmt->execute(array('name' => 'JAVASCRIPT Refresh Requests'));
 		$snippet = $stmt->fetch();
 		
 		if (!$snippet) {
-			echo "  WARNING: Snippet 'JAVASCRIPT: Refresh Requests' not found in wpw1_snippets table.\n";
+			echo "  WARNING: Snippet 'JAVASCRIPT Refresh Requests' not found in wpw1_snippets table.\n";
 			echo "  Skipping snippet deactivation.\n";
 		} else {
 			$stmt = $this->pdo->prepare(
 				"UPDATE wpw1_snippets SET active = 0 WHERE name = :name"
 			);
-			$stmt->execute(array('name' => 'JAVASCRIPT: Refresh Requests'));
+			$stmt->execute(array('name' => 'JAVASCRIPT Refresh Requests'));
 			echo "  Snippet 'JAVASCRIPT: Refresh Requests' deactivated.\n";
 		}
 		

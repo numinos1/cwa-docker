@@ -5,3 +5,17 @@ www
 *.gz
 *.tar
 .env
+
+# Large working artifacts. None of these belong in the repo, and between them they
+# account for ~40 GB in a working checkout.
+backup.sql            # ~3.2 GB uncompressed dump
+sql_split/            # ~3.2 GB, output of sqlFileSplit.php
+cwa-docker-hold/      # ~32 GB, an old copy of the environment
+home/                 # ~1.6 GB
+.DS_Store
+
+# Duplicates of the tracked copies under init/, which are what docker-compose mounts.
+# Edit init/prep.sh and init/migrate.sh, not these.
+/prep.sh
+/migrate.sh
+
