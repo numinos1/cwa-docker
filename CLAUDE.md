@@ -157,7 +157,11 @@ docker exec -i mysql mysql -u <db_user> -p<db_password> <db_name> -e "SQL HERE;"
   `backup.sql`, `sql_split/`, `cwa-docker-hold/` and `home/`. A working checkout carries
   roughly **40 GB** of those; none of it belongs in git.
 - The database arrives **cloned from production**, which means it contains **live SES
-  credentials and real member email addresses**. The CWA mail functions suppress sending
-  by checking for `/.dockerenv` — see the snippet repo's `CLAUDE.md`. Do not work around
-  it, and do not run CWA code against this database from a host PHP CLI, where that guard
-  does not apply.
+  credentials and real member email addresses**. The CWA mail functions send **only** when
+  `CWA_ENV === 'production'`, and this compose file declares `define( 'CWA_ENV', 'dev' );`
+  in `WORDPRESS_CONFIG_EXTRA` — so Docker sends nothing. See the snippet repo's `CLAUDE.md`.
+  **Do not remove that line, and do not set it to `'production'`.** An environment that
+  declares nothing also sends nothing, so the failure mode is safe; it was not always
+  — the guard used to key on `/.dockerenv` and sent real mail from anywhere else.
+  Do not run CWA code against this database from a host PHP CLI either: no `wp-config.php`
+  is loaded there, so nothing about this environment is declared at all.
