@@ -148,9 +148,11 @@ docker exec -i mysql mysql -u <db_user> -p<db_password> <db_name> -e "SQL HERE;"
 - ⚠️ **Pull before you push.** This repo has more than one contributor, and `main` has
   been pushed to from elsewhere. A merge is normal here; **never force-push.**
 - **Images are pinned to match production** — `wordpress:7.1-php8.4-apache` and
-  `mysql:8.0`. PHP 8.4 matters: it is what production serves, so snippet behavior in
-  Docker matches live. An upstream commit once reverted these to `6.1.1-php7.4` and
-  `mysql:5.7`; if that reappears, it is a regression.
+  `mysql:8.4.11` (moved up from `mysql:8.0` on 2026-09-16). PHP 8.4 matters: it is what
+  production serves, so snippet behavior in Docker matches live. An upstream commit once
+  reverted these to `6.1.1-php7.4` and `mysql:5.7`; if that reappears, it is a regression.
+  ⚠️ MySQL 8.4 upgrades the `./mysql` data directory in place, and 8.0 cannot open it
+  afterward — going back means rebuilding the database from a dump.
 - **`.env` is gitignored** and holds the database credentials, table prefix, the plugin
   disable list, and the production/dev URLs used by `migrate.sh`.
 - **Never commit dumps or archives.** `.gitignore` covers `*.gz`, `*.tar`, `www`, `mysql`,
