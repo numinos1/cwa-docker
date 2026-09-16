@@ -144,9 +144,11 @@ docker exec -i mysql mysql -u <db_user> -p<db_password> <db_name> -e "SQL HERE;"
 
 ## Conventions
 
-- **Commit straight to `main`.** This repo has no PR workflow; the snippet repo does.
-- ⚠️ **Pull before you push.** This repo has more than one contributor, and `main` has
-  been pushed to from elsewhere. A merge is normal here; **never force-push.**
+- **Use pull requests.** Since 2026-09-16 this repo works like the snippet repo:
+  pull `main`, branch, commit, open a PR, merge it, delete the branch. It used to commit
+  straight to `main`; #1 (the MySQL 8.4.11 image) was the first PR.
+- ⚠️ **Pull before you branch.** This repo has more than one contributor, and `main` has
+  been pushed to from elsewhere. **Never force-push.**
 - **Images are pinned to match production** — `wordpress:7.1-php8.4-apache` and
   `mysql:8.4.11` (moved up from `mysql:8.0` on 2026-09-16). PHP 8.4 matters: it is what
   production serves, so snippet behavior in Docker matches live. An upstream commit once
